@@ -325,8 +325,8 @@ Mnwvw2B3s6KW5FuHIAE=
 				closeVideo = stream.getTracks()[0];
 				//定时器：每隔0.5s执行capture方法，在canvas上生成图片进行解析
 				canvasImg = setInterval(capture, 500);
-			}, () => {//getUserMedia访问摄像头失败的回调
-				alert("访问用户媒体设备失败");
+			}, (err) => {//getUserMedia访问摄像头失败的回调
+				alert("访问用户媒体设备失败\n" + err);
 			});
 		} else {//浏览器不存在getUserMedia方法
 			alert('你的浏览器不支持访问用户媒体');
