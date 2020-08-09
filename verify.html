@@ -15,7 +15,7 @@
 	<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
 	<script src="https://cdn.staticfile.org/twitter-bootstrap/4.5.0/js/bootstrap.bundle.min.js" defer></script>
 	<script src="https://cdn.staticfile.org/twitter-bootstrap/4.5.0/js/bootstrap.min.js" defer></script>
-	<script src="js/qrcoderead.js" async defer></script>
+	<script src="https://unpkg.zhimg.com/@zxing/library@latest" async defer></script>
 	<script src="js/stat.js" async defer></script>
 </head>
 <style>
@@ -174,8 +174,7 @@ Mnwvw2B3s6KW5FuHIAE=
 						<span></span>
 						<span></span>
 					</div>
-					<video style="width: 100%;height:300px"></video>
-					<canvas class="hidden" width="300" height="500"></canvas>
+					<video id="scan_video" style="width: 100%;height:300px"></video>
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
@@ -247,11 +246,11 @@ Mnwvw2B3s6KW5FuHIAE=
 <script>
 	//摄像头扫描识别模块
 	function scan_code() {
-		//closeVideo:接收视频流对象序列；canvasImg:接收定时器
-		var closeVideo, canvasImg;
-		var video = $('#scan_Modal video')[0];
-		var canvas = $('#scan_Modal canvas')[0];
-		var context = canvas.getContext('2d');
+		const codeReader = new ZXing.BrowserQRCodeReader()
+
+		//显示扫描框
+		$('#scan_Modal').modal('show');
+
 		//页面切换关闭模态框
 		$(document).on("visibilitychange", function () {
 			var page = this.visibilityState;
@@ -262,75 +261,19 @@ Mnwvw2B3s6KW5FuHIAE=
 
 		//当关闭模态框时停止视频
 		$('#scan_Modal').on('hidden.bs.modal', function () {
-			//停止访问摄像头
-			closeVideo.stop();
-			//停止定时器
-			clearInterval(canvasImg);
-			//清空canvas上的图片
-			context.clearRect(0, 0, canvas.width, canvas.height);
+			codeReader.reset()
 		})
-		//getUserMedia兼容性处理
-		var getUserMedia = (constraints, success, error) => {
-			if (navigator.mediaDevices.getUserMedia) {
-				//最新的标准API
-				navigator.mediaDevices.getUserMedia(constraints).then(success).catch(error);
-			} else if (navigator.webkitGetUserMedia) {
-				//webkit核心浏览器
-				navigator.webkitGetUserMedia(constraints).then(success).catch(error);
-			} else if (navigator.mozGetUserMedia) {
-				//firfox浏览器
-				navigator.mozGetUserMedia(constraints).then(success).catch(error);
-			} else if (navigator.getUserMedia) {
-				//旧版API
-				navigator.getUserMedia(constraints).then(success).catch(error);
-			}
-		}
 
-		const codeReader = new ZXing.BrowserQRCodeReader()
-		var capture = async function () {
-			//canvas上生成video里的图像
-			context.drawImage(video, 0, 0, 300, 300);
-			//toDataURL会返回一个data-URI（base64）然后对此进行解析
-			var img = canvas.toDataURL('image/png');
-			codeReader.decodeFromImage(undefined, img)
-				.then((result) => {	//二维码解析成功
-					$(".fh5co-loader").fadeIn("slow");
-					//停止访问摄像头
-					closeVideo.stop();
-					//停止定时器
-					clearInterval(canvasImg);
-					//清空canvas上的图片
-					context.clearRect(0, 0, canvas.width, canvas.height);
-					$('#scan_Modal').modal('hide');
-					//显示二维码内容
-					verify(result.text);
-				}).catch((err) => { })
-		}
-		//调用用户媒体设备, 访问摄像头
-		if (navigator.mediaDevices.getUserMedia || navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia) {
-			//所在浏览器支持getUserMedia就调用
-			getUserMedia({
-				video: {
-					width: 500,
-					height: 500
-				},
-				audio: false
-			}, (stream) => {//getUserMedia访问摄像头成功的回调
-				//显示模态框
-				$('#scan_Modal').modal("show");
-				//video接收摄像头捕获的视频流
-				video.srcObject = stream;
-				//视频流在video标签中播放
-				video.play();
-				//使用closeVideo变量接收视频流对象序列，用来之后的关闭操作
-				closeVideo = stream.getTracks()[0];
-				//定时器：每隔0.5s执行capture方法，在canvas上生成图片进行解析
-				canvasImg = setInterval(capture, 500);
-			}, (err) => {//getUserMedia访问摄像头失败的回调
-				alert("访问用户媒体设备失败\n" + err);
-			});
-		} else {//浏览器不存在getUserMedia方法
-			alert('你的浏览器不支持访问用户媒体');
-		}
+		codeReader.decodeOnceFromVideoDevice(undefined, 'scan_video')
+			.then((result) => {	//二维码解析成功
+				$(".fh5co-loader").fadeIn("slow");
+				$('#scan_Modal').modal('hide');
+				//显示二维码内容
+				verify(result.text);
+			}).catch((err) => {
+				$('#scan_Modal').modal('hide');
+				if (err != "s: Video stream has ended before any code could be detected.")	//关闭视频流时会出现此信息
+					alert("出现错误，debug信息：\n" + err);
+			})
 	}
 </script>
