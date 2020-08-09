@@ -1,113 +1,115 @@
 <!DOCTYPE html>
-<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0'>
 <meta name='apple-mobile-web-app-capable' content='yes'>
 <meta name='apple-mobile-web-app-status-bar-style' content='black'>
 <meta name='format-detection' content='telephone=no'>
-<html>
-<head>
 <meta charset="utf-8">
-<title>成员验证</title>
-<link href="css/style.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.5.0/css/bootstrap.min.css"></script>
-<script src="https://cdn.staticfile.org/openpgp/4.5.5/openpgp.min.js"></script>
-<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://cdn.staticfile.org/twitter-bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.staticfile.org/twitter-bootstrap/4.5.0/js/bootstrap.min.js"></script>
-<script src="js/qrcoderead.js"></script>
-<script src="js/stat.js"></script>
+<html>
+
+<head>
+	<title>成员验证</title>
+	<link href="css/style.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.5.0/css/bootstrap.min.css">
+	<script src="https://cdn.staticfile.org/openpgp/4.5.5/openpgp.min.js"></script>
+	<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://cdn.staticfile.org/twitter-bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script>
+	<script src="https://cdn.staticfile.org/twitter-bootstrap/4.5.0/js/bootstrap.min.js"></script>
+	<script src="js/qrcoderead.js"></script>
+	<script src="js/stat.js"></script>
 </head>
 <style>
-html{
-	height: 100%;
-	width: 100%;
-}
+	html {
+		height: 100%;
+		width: 100%;
+	}
 
-body::before { 
-	content: ''; 
-	position: absolute; 
-	top: 0; 
-	right: 0; 
-	bottom: 0; 
-	left: 0; 
-	background: rgba(255,255,255,.4);
-	z-index: -1;
-}
+	body::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		background: rgba(255, 255, 255, .4);
+		z-index: -1;
+	}
 
-body{
-	overflow: hidden;
-	background-image: url(https://www.yangshangzhen.com/bing/wallpaper);
-	background-repeat: no-repeat;
-	background-size: 100% 100%;
-}
+	body {
+		overflow: hidden;
+		background-image: url(https://www.yangshangzhen.com/bing/wallpaper);
+		background-repeat: no-repeat;
+		background-size: 100% 100%;
+	}
 </style>
+
 <body class="container-fluid center">
-<script>
-	$(function(){
-		$(".fh5co-loader").fadeOut("slow");
-		$(".hidden").hide();
-	});
-</script>
-<div class="fh5co-loader"></div>
-<script>
-//转换特殊字符
-function conv(data){
-	var output='-----BEGIN PGP SIGNED MESSAGE-----';
-	for(var i=0;i<data.length;++i){
-		switch(data[i]){
-			case '%':
-				output+="\n";
-				break;
-			case "\n":
-				break;
-			case '~':
-				output+='-----BEGIN PGP SIGNATURE-----';
-				break;
-			case '!':
-				output+='Hash: SHA';
-				break;
-			default:
-				output+=data[i];
+	<script>
+		$(function () {
+			$(".fh5co-loader").fadeOut("slow");
+			$(".hidden").hide();
+		});
+	</script>
+	<div class="fh5co-loader"></div>
+	<script>
+		//转换特殊字符
+		function conv(data) {
+			var output = '-----BEGIN PGP SIGNED MESSAGE-----';
+			for (var i = 0; i < data.length; ++i) {
+				switch (data[i]) {
+					case '%':
+						output += "\n";
+						break;
+					case "\n":
+						break;
+					case '~':
+						output += '-----BEGIN PGP SIGNATURE-----';
+						break;
+					case '!':
+						output += 'Hash: SHA';
+						break;
+					default:
+						output += data[i];
+				}
+
+			}
+			output += '-----END PGP SIGNATURE-----'
+			return output;
 		}
-		
-	}
-	output+='-----END PGP SIGNATURE-----'
-	return output;
-}
 
-//签名验证成功后回调的函数
-function success(data){
-	var str=data.split("|");
-	var time=new Date();
-	var now=time.getTime()/1000;	//转换为秒
-	if(str[2]>now){
-		var identity=''
-		for(var i=0;i<str[1].length;++i)
-			if(str[1][i]=="\n")
-				identity+='<br>';
-			else
-				identity+=str[1][i];
-		var date=new Date(str[2]*1000);
+		//签名验证成功后回调的函数
+		function success(data) {
+			var str = data.split("|");
+			var time = new Date();
+			var now = time.getTime() / 1000;	//转换为秒
+			if (str[2] > now) {
+				var identity = ''
+				for (var i = 0; i < str[1].length; ++i)
+					if (str[1][i] == "\n")
+						identity += '<br>';
+					else
+						identity += str[1][i];
+				var date = new Date(str[2] * 1000);
 
-		var msg='<p><strong>姓名：</strong>'+str[0]+'</p><p><strong>身份：</strong>'+identity+'</p><p><strong>证件有效期至：</strong>'+date.getFullYear()+'年'+(date.getMonth()+1)+'月'+date.getDate()+'日</p>';
-		document.getElementById("user_msg").innerHTML=msg;
-		$(".fh5co-loader").fadeOut("slow");
-		$("#Modal_msg").modal("show");
-	}else{
-		$(".fh5co-loader").fadeOut("slow");
-		alert("证件无效：证件已过期");
-	}
-}
-async function verify(inputdata){
-	inputdata=conv(inputdata);
-	try{
-		var msgdata=(await openpgp.message.readArmored(inputdata));
-	}catch(e){
-		$(".fh5co-loader").fadeOut("slow");
-		alert("数据无效");
-		return
-	}	
-	const publicKeyArmored = `-----BEGIN PGP PUBLIC KEY BLOCK-----
+				var msg = '<p><strong>姓名：</strong>' + str[0] + '</p><p><strong>身份：</strong>' + identity + '</p><p><strong>证件有效期至：</strong>' + date.getFullYear() + '年' + (date.getMonth() + 1) + '月' + date.getDate() + '日</p>';
+				document.getElementById("user_msg").innerHTML = msg;
+				$(".fh5co-loader").fadeOut("slow");
+				$("#Modal_msg").modal("show");
+			} else {
+				$(".fh5co-loader").fadeOut("slow");
+				alert("证件无效：证件已过期");
+			}
+		}
+		async function verify(inputdata) {
+			inputdata = conv(inputdata);
+			try {
+				var msgdata = (await openpgp.message.readArmored(inputdata));
+			} catch (e) {
+				$(".fh5co-loader").fadeOut("slow");
+				alert("数据无效");
+				return
+			}
+			const publicKeyArmored = `-----BEGIN PGP PUBLIC KEY BLOCK-----
 
 mDMEXv7uLRYJKwYBBAHaRw8BAQdAkLqjVs2OvK9KVNLYzcHituTSq/fy8KRccHjl
 l+Ns6IW0NUNTUE1SVCAoQ1NQTSBSZXNlYXJjaCBUZWFtKSA8Y2hlbmxobGludXhA
@@ -117,213 +119,217 @@ vBpDepqESxtZtjab4q7TnV8tF0C5hf1VqiHlSgEArC68WgJYITw/2ugSWwsKSwnC
 Mnwvw2B3s6KW5FuHIAE=
 =vqyG
 -----END PGP PUBLIC KEY BLOCK-----`;
-	try{
-		const verified = await openpgp.verify({
-			message: await openpgp.cleartext.readArmored(inputdata),           // parse armored message
-			publicKeys: (await openpgp.key.readArmored(publicKeyArmored)).keys // for verification
-		});
-		const { valid } = verified.signatures[0];
-		if (valid) {
-			success(verified.data);
-		} else {
-			$(".fh5co-loader").fadeOut("slow");
-			alert("签名验证失败\n证件无效！");
+			try {
+				const verified = await openpgp.verify({
+					message: await openpgp.cleartext.readArmored(inputdata),           // parse armored message
+					publicKeys: (await openpgp.key.readArmored(publicKeyArmored)).keys // for verification
+				});
+				const { valid } = verified.signatures[0];
+				if (valid) {
+					success(verified.data);
+				} else {
+					$(".fh5co-loader").fadeOut("slow");
+					alert("签名验证失败\n证件无效！");
+				}
+			} catch (e) {
+				$(".fh5co-loader").fadeOut("slow");
+				window.alert("出现错误\n错误代码:" + e);
+				return
+			}
+			await openpgp.destroyWorker();
 		}
-	}catch(e){
-		$(".fh5co-loader").fadeOut("slow");
-		window.alert("出现错误\n错误代码:"+e);
-		return
-	}
-	await openpgp.destroyWorker();
-}
-</script>
-<div style="text-align: center;" id="page">
-	<br>
-	<h2>CSPMRT 成员验证</h2>
-	<hr>
-	<div class="alert alert-warning col-md-6 offset-md-3">
-		<p>
-			每一位 CSPMRT 的<strong>正式成员</strong>都会有一张"CSPMRT成员证"，
-			此成员证上二维码中的信息是使用密码学技术生成，几乎不可能伪造。
-			你可以在这个界面中通过扫描二维码或上传成员证图片的方式对你手中的成员证进行验证。
-		</p>
+	</script>
+	<div style="text-align: center;" id="page">
+		<br>
+		<h2>CSPMRT 成员验证</h2>
+		<hr>
+		<div class="alert alert-warning col-md-6 offset-md-3">
+			<p>
+				每一位 CSPMRT 的<strong>正式成员</strong>都会有一张"CSPMRT成员证"，
+				此成员证上二维码中的信息是使用密码学技术生成，几乎不可能伪造。
+				你可以在这个界面中通过扫描二维码或上传成员证图片的方式对你手中的成员证进行验证。
+			</p>
+		</div>
+		<hr>
+
+		<button type="button" class="btn btn-primary" onclick="scan_code()">通过扫描成员证上二维码进行验证</button>
+		<hr>
+		<h4>通过上传成员证图片进行验证:</h4>
+		<input type="file" id="file" accept="image/gif,image/jpeg,image/jpg,image/png,image/svg">
 	</div>
-	<hr>
-
-	<button type="button" class="btn btn-primary" onclick="scan_code()">通过扫描成员证上二维码进行验证</button><hr>
-	<h4>通过上传成员证图片进行验证:</h4>
-	<input type="file" id="file" accept="image/gif,image/jpeg,image/jpg,image/png,image/svg">
-</div>
-<!--扫描模态框-->
-<div class="modal fade" id="scan_Modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
-	    <div class="modal-content">
-		<div class="modal-header">
-			<h4 class="modal-title">请扫描成员证上的二维码</h4>
-		</div>
-		<div class="modal-body" style="position:relative">
-			<div class="qrcode-box" style="position:absolute;left:50%;transform:translateX(-50%);width:300px;height:300px">
-				<span></span>
-				<span></span>
-				<span></span>
-				<span></span>
-			</div>
-			<video style="width: 100%;height:300px"></video>
-			<canvas class="hidden" width="300" height="500"></canvas>
-		</div>
-		<div class="modal-footer">
-		    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-		</div>
-	    </div>
-	</div>
-</div>
-<!-- 用于显示最终信息的模态框 -->
-<div class="modal fade" id="Modal_msg">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<!-- 模态框头部 -->
-			<div class="modal-header">
-			<h4 class="modal-title" id="Modal_title">证件有效</h4>
-			<button type="button" class="close" data-dismiss="modal">&times;</button>
-			</div>
-
-			<!-- 模态框主体 -->
-			<div class="modal-body" id="user_msg">
-			</div>
-
-			<!-- 模态框底部 -->
-			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-dismiss="modal">确定</button>
+	<!--扫描模态框-->
+	<div class="modal fade" id="scan_Modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+		aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">请扫描成员证上的二维码</h4>
+				</div>
+				<div class="modal-body" style="position:relative">
+					<div class="qrcode-box"
+						style="position:absolute;left:50%;transform:translateX(-50%);width:300px;height:300px">
+						<span></span>
+						<span></span>
+						<span></span>
+						<span></span>
+					</div>
+					<video style="width: 100%;height:300px"></video>
+					<canvas class="hidden" width="300" height="500"></canvas>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+				</div>
 			</div>
 		</div>
 	</div>
-</div>
+	<!-- 用于显示最终信息的模态框 -->
+	<div class="modal fade" id="Modal_msg">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<!-- 模态框头部 -->
+				<div class="modal-header">
+					<h4 class="modal-title" id="Modal_title">证件有效</h4>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+
+				<!-- 模态框主体 -->
+				<div class="modal-body" id="user_msg">
+				</div>
+
+				<!-- 模态框底部 -->
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">确定</button>
+				</div>
+			</div>
+		</div>
+	</div>
 </body>
+
 </html>
 <script>
-//图片上传识别
+	//图片上传识别
 
-//createObjectURL兼容性处理，返回file对象的URL
-function getObjectURL(file) {
-	var url = null;
-	if (window.createObjectURL != undefined) {	// basic
-		url = window.createObjectURL(file);
-	} else if (window.URL != undefined) {	// mozilla(firefox)
-		url = window.URL.createObjectURL(file);
-	} else if (window.webkitURL != undefined) {	// webkit or chrome
-		url = window.webkitURL.createObjectURL(file);
+	//createObjectURL兼容性处理，返回file对象的URL
+	function getObjectURL(file) {
+		var url = null;
+		if (window.createObjectURL != undefined) {	// basic
+			url = window.createObjectURL(file);
+		} else if (window.URL != undefined) {	// mozilla(firefox)
+			url = window.URL.createObjectURL(file);
+		} else if (window.webkitURL != undefined) {	// webkit or chrome
+			url = window.webkitURL.createObjectURL(file);
+		}
+		return url;
 	}
-	return url;
-}
 
-//点击按钮上传图片之后
-$("#file").on('change', function () {
-	try{
-		$(".fh5co-loader").fadeIn("slow");
-		var img = getObjectURL(this.files[0]);
-		const codeReader = new ZXing.BrowserQRCodeReader()
-		codeReader.decodeFromImage(undefined, img)
-		.then((result) => {
-			URL.revokeObjectURL(img);
-			verify(result.text);
-		}).catch((err) => {
-			URL.revokeObjectURL(img);
+	//点击按钮上传图片之后
+	$("#file").on('change', function () {
+		try {
+			$(".fh5co-loader").fadeIn("slow");
+			var img = getObjectURL(this.files[0]);
+			const codeReader = new ZXing.BrowserQRCodeReader()
+			codeReader.decodeFromImage(undefined, img)
+				.then((result) => {
+					URL.revokeObjectURL(img);
+					verify(result.text);
+				}).catch((err) => {
+					URL.revokeObjectURL(img);
+					$(".fh5co-loader").fadeOut("slow");
+					alert("出错：请检查图片是否有效");
+				})
+		} catch (err) {
 			$(".fh5co-loader").fadeOut("slow");
-			alert("出错：请检查图片是否有效");
-		})
-	} catch(err){
-		$(".fh5co-loader").fadeOut("slow");
-		throw err;
-	}
-});
-</script>
-<script>
-//摄像头扫描识别模块
-function scan_code() {
-	//closeVideo:接收视频流对象序列；canvasImg:接收定时器
-	var closeVideo, canvasImg;
-	var video = $('#scan_Modal video')[0];
-	var canvas = $('#scan_Modal canvas')[0];
-	var context = canvas.getContext('2d');
-	//页面切换关闭模态框
-	$(document).on("visibilitychange", function () {
-		var page = this.visibilityState;
-		if (page == "hidden") {
-			$('#scan_Modal').modal('hide');
+			throw err;
 		}
 	});
+</script>
+<script>
+	//摄像头扫描识别模块
+	function scan_code() {
+		//closeVideo:接收视频流对象序列；canvasImg:接收定时器
+		var closeVideo, canvasImg;
+		var video = $('#scan_Modal video')[0];
+		var canvas = $('#scan_Modal canvas')[0];
+		var context = canvas.getContext('2d');
+		//页面切换关闭模态框
+		$(document).on("visibilitychange", function () {
+			var page = this.visibilityState;
+			if (page == "hidden") {
+				$('#scan_Modal').modal('hide');
+			}
+		});
 
-	//当关闭模态框时停止视频
-	$('#scan_Modal').on('hidden.bs.modal', function () {
-		//停止访问摄像头
-		closeVideo.stop();
-		//停止定时器
-		clearInterval(canvasImg);
-		//清空canvas上的图片
-		context.clearRect(0, 0, canvas.width, canvas.height);
-	})
-	//getUserMedia兼容性处理
-	var getUserMedia = (constraints, success, error) => {
-		if (navigator.mediaDevices.getUserMedia) {
-			//最新的标准API
-			navigator.mediaDevices.getUserMedia(constraints).then(success).catch(error);
-		} else if (navigator.webkitGetUserMedia) {
-			//webkit核心浏览器
-			navigator.webkitGetUserMedia(constraints).then(success).catch(error);
-		} else if (navigator.mozGetUserMedia) {
-			//firfox浏览器
-			navigator.mozGetUserMedia(constraints).then(success).catch(error);
-		} else if (navigator.getUserMedia) {
-			//旧版API
-			navigator.getUserMedia(constraints).then(success).catch(error);
-		}
-	}
-
-	const codeReader = new ZXing.BrowserQRCodeReader()
-	var capture = async function() {
-		//canvas上生成video里的图像
-		context.drawImage(video, 0, 0, 300, 300);
-		//toDataURL会返回一个data-URI（base64）然后对此进行解析
-		var img=canvas.toDataURL('image/png');
-		codeReader.decodeFromImage(undefined, img)
-		.then((result) => {	//二维码解析成功
-			$(".fh5co-loader").fadeIn("slow");
+		//当关闭模态框时停止视频
+		$('#scan_Modal').on('hidden.bs.modal', function () {
 			//停止访问摄像头
 			closeVideo.stop();
 			//停止定时器
 			clearInterval(canvasImg);
 			//清空canvas上的图片
 			context.clearRect(0, 0, canvas.width, canvas.height);
-			$('#scan_Modal').modal('hide');
-			//显示二维码内容
-			verify(result.text);
-		}).catch((err) => {})
+		})
+		//getUserMedia兼容性处理
+		var getUserMedia = (constraints, success, error) => {
+			if (navigator.mediaDevices.getUserMedia) {
+				//最新的标准API
+				navigator.mediaDevices.getUserMedia(constraints).then(success).catch(error);
+			} else if (navigator.webkitGetUserMedia) {
+				//webkit核心浏览器
+				navigator.webkitGetUserMedia(constraints).then(success).catch(error);
+			} else if (navigator.mozGetUserMedia) {
+				//firfox浏览器
+				navigator.mozGetUserMedia(constraints).then(success).catch(error);
+			} else if (navigator.getUserMedia) {
+				//旧版API
+				navigator.getUserMedia(constraints).then(success).catch(error);
+			}
+		}
+
+		const codeReader = new ZXing.BrowserQRCodeReader()
+		var capture = async function () {
+			//canvas上生成video里的图像
+			context.drawImage(video, 0, 0, 300, 300);
+			//toDataURL会返回一个data-URI（base64）然后对此进行解析
+			var img = canvas.toDataURL('image/png');
+			codeReader.decodeFromImage(undefined, img)
+				.then((result) => {	//二维码解析成功
+					$(".fh5co-loader").fadeIn("slow");
+					//停止访问摄像头
+					closeVideo.stop();
+					//停止定时器
+					clearInterval(canvasImg);
+					//清空canvas上的图片
+					context.clearRect(0, 0, canvas.width, canvas.height);
+					$('#scan_Modal').modal('hide');
+					//显示二维码内容
+					verify(result.text);
+				}).catch((err) => { })
+		}
+		//调用用户媒体设备, 访问摄像头
+		if (navigator.mediaDevices.getUserMedia || navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia) {
+			//所在浏览器支持getUserMedia就调用
+			getUserMedia({
+				video: {
+					width: 500,
+					height: 500
+				},
+				audio: false
+			}, (stream) => {//getUserMedia访问摄像头成功的回调
+				//显示模态框
+				$('#scan_Modal').modal("show");
+				//video接收摄像头捕获的视频流
+				video.srcObject = stream;
+				//视频流在video标签中播放
+				video.play();
+				//使用closeVideo变量接收视频流对象序列，用来之后的关闭操作
+				closeVideo = stream.getTracks()[0];
+				//定时器：每隔0.5s执行capture方法，在canvas上生成图片进行解析
+				canvasImg = setInterval(capture, 500);
+			}, () => {//getUserMedia访问摄像头失败的回调
+				alert("访问用户媒体设备失败");
+			});
+		} else {//浏览器不存在getUserMedia方法
+			alert('你的浏览器不支持访问用户媒体');
+		}
 	}
-	//调用用户媒体设备, 访问摄像头
-	if (navigator.mediaDevices.getUserMedia || navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia) {
-		//所在浏览器支持getUserMedia就调用
-		getUserMedia({
-			video: {
-				width: 500,
-				height: 500
-			},
-			audio: false
-		}, (stream) => {//getUserMedia访问摄像头成功的回调
-			//显示模态框
-			$('#scan_Modal').modal("show");
-			//video接收摄像头捕获的视频流
-			video.srcObject = stream;
-			//视频流在video标签中播放
-			video.play();
-			//使用closeVideo变量接收视频流对象序列，用来之后的关闭操作
-			closeVideo = stream.getTracks()[0];
-			//定时器：每隔0.5s执行capture方法，在canvas上生成图片进行解析
-			canvasImg = setInterval(capture, 500);
-		}, () => {//getUserMedia访问摄像头失败的回调
-			alert("访问用户媒体设备失败");
-		});
-	} else {//浏览器不存在getUserMedia方法
-		alert('你的浏览器不支持访问用户媒体');
-	}
-}
 </script>
