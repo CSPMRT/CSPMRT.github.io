@@ -483,6 +483,7 @@ h1, h2, h3, h4, h5, h6, figure {
 }
 
 #fh5co-explore,
+#fh5co-synopsis,
 #fh5co-pricing,
 #fh5co-testimonial,
 #fh5co-join,
@@ -494,6 +495,7 @@ h1, h2, h3, h4, h5, h6, figure {
 }
 @media screen and (max-width: 768px) {
 	#fh5co-explore,
+	#fh5co-synopsis,
 	#fh5co-pricing,
 	#fh5co-testimonial,
 	#fh5co-join,
@@ -535,7 +537,7 @@ h1, h2, h3, h4, h5, h6, figure {
 	display: block;
 }
 
-#fh5co-explore .fh5co-explore1 {
+#fh5co-explore #fh5co-synopsis .fh5co-explore1 .fh5co-synopsis {
 	margin-bottom: 7em;
 }
 
