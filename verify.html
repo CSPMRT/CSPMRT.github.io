@@ -46,11 +46,11 @@
 <body class="container-fluid center">
 	<script>
 		$(function () {
-			$(".fh5co-loader").fadeOut("slow");
+			$(".cspmrt-loader").fadeOut("slow");
 			$(".hidden").hide();
 		});
 	</script>
-	<div class="fh5co-loader"></div>
+	<div class="cspmrt-loader"></div>
 	<script>
 		//转换特殊字符
 		function conv(data) {
@@ -93,10 +93,10 @@
 
 				var msg = '<p><strong>姓名：</strong>' + str[0] + '</p><p><strong>身份：</strong>' + identity + '</p><p><strong>证件有效期至：</strong>' + date.getFullYear() + '年' + (date.getMonth() + 1) + '月' + date.getDate() + '日</p>';
 				document.getElementById("user_msg").innerHTML = msg;
-				$(".fh5co-loader").fadeOut("slow");
+				$(".cspmrt-loader").fadeOut("slow");
 				$("#Modal_msg").modal("show");
 			} else {
-				$(".fh5co-loader").fadeOut("slow");
+				$(".cspmrt-loader").fadeOut("slow");
 				alert("证件无效：证件已过期");
 			}
 		}
@@ -105,7 +105,7 @@
 			try {
 				var msgdata = (await openpgp.message.readArmored(inputdata));
 			} catch (e) {
-				$(".fh5co-loader").fadeOut("slow");
+				$(".cspmrt-loader").fadeOut("slow");
 				alert("数据无效");
 				return
 			}
@@ -128,11 +128,11 @@ Mnwvw2B3s6KW5FuHIAE=
 				if (valid) {
 					success(verified.data);
 				} else {
-					$(".fh5co-loader").fadeOut("slow");
+					$(".cspmrt-loader").fadeOut("slow");
 					alert("签名验证失败\n证件无效！");
 				}
 			} catch (e) {
-				$(".fh5co-loader").fadeOut("slow");
+				$(".cspmrt-loader").fadeOut("slow");
 				window.alert("出现错误\n错误代码:" + e);
 				return
 			}
@@ -225,7 +225,7 @@ Mnwvw2B3s6KW5FuHIAE=
 	//点击按钮上传图片之后
 	$("#file").on('change', function () {
 		try {
-			$(".fh5co-loader").fadeIn("slow");
+			$(".cspmrt-loader").fadeIn("slow");
 			var img = getObjectURL(this.files[0]);
 			const codeReader = new ZXing.BrowserQRCodeReader()
 			codeReader.decodeFromImage(undefined, img)
@@ -234,11 +234,11 @@ Mnwvw2B3s6KW5FuHIAE=
 					verify(result.text);
 				}).catch((err) => {
 					URL.revokeObjectURL(img);
-					$(".fh5co-loader").fadeOut("slow");
+					$(".cspmrt-loader").fadeOut("slow");
 					alert("出错：请检查图片是否有效");
 				})
 		} catch (err) {
-			$(".fh5co-loader").fadeOut("slow");
+			$(".cspmrt-loader").fadeOut("slow");
 			throw err;
 		}
 	});
@@ -266,7 +266,7 @@ Mnwvw2B3s6KW5FuHIAE=
 
 		codeReader.decodeOnceFromVideoDevice(undefined, 'scan_video')
 			.then((result) => {	//二维码解析成功
-				$(".fh5co-loader").fadeIn("slow");
+				$(".cspmrt-loader").fadeIn("slow");
 				$('#scan_Modal').modal('hide');
 				//显示二维码内容
 				verify(result.text);

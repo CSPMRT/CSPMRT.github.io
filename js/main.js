@@ -25,11 +25,11 @@
 
 	var mobileMenuOutsideClick = function () {
 		$(document).click(function (e) {
-			var container = $("#fh5co-offcanvas, .js-fh5co-nav-toggle");
+			var container = $("#cspmrt-offcanvas, .js-cspmrt-nav-toggle");
 			if (!container.is(e.target) && container.has(e.target).length === 0) {
 				if ($('body').hasClass('offcanvas')) {
 					$('body').removeClass('offcanvas');
-					$('.js-fh5co-nav-toggle').removeClass('active');
+					$('.js-cspmrt-nav-toggle').removeClass('active');
 				}
 			}
 		});
@@ -38,15 +38,15 @@
 
 	var offcanvasMenu = function () {
 
-		$('#page').prepend('<div id="fh5co-offcanvas" />');
-		$('#page').prepend('<a href="#" class="js-fh5co-nav-toggle fh5co-nav-toggle fh5co-nav-white"><i></i></a>');
+		$('#page').prepend('<div id="cspmrt-offcanvas" />');
+		$('#page').prepend('<a href="#" class="js-cspmrt-nav-toggle cspmrt-nav-toggle cspmrt-nav-white"><i></i></a>');
 		var clone1 = $('.menu-1 > ul').clone();
-		$('#fh5co-offcanvas').append(clone1);
+		$('#cspmrt-offcanvas').append(clone1);
 		var clone2 = $('.menu-2 > ul').clone();
-		$('#fh5co-offcanvas').append(clone2);
+		$('#cspmrt-offcanvas').append(clone2);
 
-		$('#fh5co-offcanvas .has-dropdown').addClass('offcanvas-has-dropdown');
-		$('#fh5co-offcanvas')
+		$('#cspmrt-offcanvas .has-dropdown').addClass('offcanvas-has-dropdown');
+		$('#cspmrt-offcanvas')
 			.find('li')
 			.removeClass('has-dropdown');
 
@@ -72,7 +72,7 @@
 
 			if ($('body').hasClass('offcanvas')) {
 				$('body').removeClass('offcanvas');
-				$('.js-fh5co-nav-toggle').removeClass('active');
+				$('.js-cspmrt-nav-toggle').removeClass('active');
 			}
 		});
 	};
@@ -80,7 +80,7 @@
 
 	var burgerMenu = function () {
 
-		$('body').on('click', '.js-fh5co-nav-toggle', function (event) {
+		$('body').on('click', '.js-cspmrt-nav-toggle', function (event) {
 			var $this = $(this);
 
 			if ($('body').hasClass('overflow offcanvas')) {
@@ -181,7 +181,7 @@
 
 	// Loading page
 	var loaderPage = function () {
-		$(".fh5co-loader").fadeOut("slow");
+		$(".cspmrt-loader").fadeOut("slow");
 	};
 
 	var counter = function () {
@@ -193,8 +193,8 @@
 	};
 
 	var counterWayPoint = function () {
-		if ($('#fh5co-counter').length > 0) {
-			$('#fh5co-counter').waypoint(function (direction) {
+		if ($('#cspmrt-counter').length > 0) {
+			$('#cspmrt-counter').waypoint(function (direction) {
 
 				if (direction === 'down' && !$(this.element).hasClass('animated')) {
 					setTimeout(counter, 400);
